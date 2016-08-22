@@ -15,6 +15,7 @@ function PageTextureManager(pages) {
     }
 
     this.liftPage = function(onLeft) {
+
         if(onLeft && !this.flipping_page_on_left) {
             this.current_left_static_page -= 2;
         }
@@ -24,7 +25,7 @@ function PageTextureManager(pages) {
         if(this.current_left_static_page < 0) {
             this.current_left_static_page += this.pages.length;
         }
-    }
+    };
 
     this.dropPage = function(onLeft) {
         this.flipping_page_on_left = onLeft;
@@ -73,7 +74,7 @@ function ChromeBookSim(canvas, page_width, page_height, tessellation_res) {
                         }
                     });
 
-       /* // set horizontal lengths
+        // set horizontal lengths
         this.constraints = this.constraints.concat(function() {
                         for(var i = 0; i < mesh.num_verts; ++i) {
                             if(i % mesh.cols == 0)
@@ -81,7 +82,7 @@ function ChromeBookSim(canvas, page_width, page_height, tessellation_res) {
                             applyLengthConstraint(mesh, i, i-1, mesh.tessellation_res);
                         }
                     });
-*/
+
         // depenetrate ground
         this.constraints = this.constraints.concat(function() {
                         for(var i = 0; i < mesh.num_verts; ++i) {
@@ -106,7 +107,7 @@ function ChromeBookSim(canvas, page_width, page_height, tessellation_res) {
                            z += mesh.tessellation_res;
                        }
                    });
-    }
+    };
 
     // Page control incorporates user input as well as an "auto-drive" to finish turning when the cursor is released
     this.initPageControl = function() {
@@ -117,7 +118,7 @@ function ChromeBookSim(canvas, page_width, page_height, tessellation_res) {
         return function(dt) {
             if(this.finishing_turn) {
                 this.turn_amount = this.last_turn_amount + (this.last_turn_amount < 0.0 ? -this.turn_speed : this.turn_speed) * dt;
-                this.turn_amount = clamp(this.turn_amount, -1.0, 1.0);
+                this.turn_amount = clamp(this.turn_amount, -1.0, 1.0); // TODO comment => auto-scrolling
 
                 if(Math.abs(this.turn_amount) - 1 == 0) {
                     this.book_mesh.resetVertArray(this.turn_amount > 0.0);
@@ -140,8 +141,7 @@ function ChromeBookSim(canvas, page_width, page_height, tessellation_res) {
                     loadTexture("img/page3.jpg", true),
                     loadTexture("img/page4.jpg", true),
                     loadTexture("img/page5.jpg", true),
-                    loadTexture("img/page6.jpg", true),
-                    loadTexture("https://smallpdf.com/assets/img/fb/pdf-to-ppt.png", true)];
+                    loadTexture("img/page6.jpg", true)];
         this.pages = new PageTextureManager(p);
     }
 
@@ -204,7 +204,7 @@ function ChromeBookSim(canvas, page_width, page_height, tessellation_res) {
         this.sendStaticPages.call(this, this.pages.getTexture(0), this.pages.getTexture(3));
         gl.depthMask(true);
         this.book_mesh.draw(this.pages.getTexture(1), this.pages.getTexture(2));
-    }
+    };
 
     this.physics_active = false;
     this.lastTime = 0;
@@ -218,13 +218,13 @@ function ChromeBookSim(canvas, page_width, page_height, tessellation_res) {
             }
         }
         this.lastTime = timeNow;
-    }
+    };
 
     this.tick = function() {
         requestAnimFrame(function() { sim.tick(); } );
         this.animate();
         this.drawScene();
-    }
+    };
 
     // build a function to translate screen-space mouse coords into 2D coords in the plane of the book
     this.initPicking = function(fovy, aspect_ratio) {
@@ -240,7 +240,7 @@ function ChromeBookSim(canvas, page_width, page_height, tessellation_res) {
             var t = p0[1]/(p0[1]-p1[1]);
             return [p0[0] - t*(p0[0]-p1[0]), p0[2] - t*(p0[2]-p1[2])];
         }
-    }
+    };
 
     this.handleMouseDown = function(event) {
         if(!sim.physics_active) {
@@ -288,6 +288,6 @@ function ChromeBookSim(canvas, page_width, page_height, tessellation_res) {
     canvas.onmousedown = this.handleMouseDown;
     canvas.onmousemove = this.handleMouseMove;
     canvas.onmouseup = this.handleMouseUp;
- //   canvas.onmouseout = this.handleMouseUp;
+    canvas.onmouseout = this.handleMouseUp;
     this.pick = this.initPicking(45, gl.viewportWidth/gl.viewportHeight);
 }

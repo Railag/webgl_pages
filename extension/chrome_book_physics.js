@@ -1,7 +1,7 @@
 function verlet(dt, mesh) {
     for(var i = 0; i < mesh.num_verts; ++i) {
         var a_x = 0.0;
-        var a_y = -0.00001;	// gravity
+        var a_y = gravity;
         var a_z = 0.0;
         var d_x = dt*dt*a_x;
         var d_y = dt*dt*a_y;
@@ -28,7 +28,7 @@ function satisfyConstraints(constraints, iterations) {
 
 function updatePhysics(dt, mesh, constraints) {
     verlet(dt, mesh);
-    satisfyConstraints(constraints, 30);
+    satisfyConstraints(constraints, constraints_iterations);
 }
 
 var applyLengthConstraint = function(mesh, v1, v2, restLength) {
